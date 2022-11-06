@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const { response } = require('express');
 const { Category, Product } = require('../../models');
 
 // The `/api/categories` endpoint
@@ -24,7 +25,7 @@ router.get('/:id', async (req, res) => {
       include: [{ model: Product }]
     });
     if (!data) {
-    res.status(404).json({ message: 'No category found with that id!'})
+      res.status(404).json({ message: 'No category found with that id!' })
     };
     res.status(200).json(data);
   } catch (err) {
@@ -34,26 +35,29 @@ router.get('/:id', async (req, res) => {
 
 router.post('/', async (req, res) => {
   // create a new category
+  if (!req.body?.category_name) res.status(400).json({ message: 'Missing category name in request body'})
   try {
-  const data = await Category.create(req.body);
-  res.status(200).json(data);
+    const data = await Category.create(req.body);
+    console.log(data)
+    // if (!data) res.status(404).json({ message: 'Unable to create category'})
+    res.status(200).json(data);
   } catch (err) {
-  res.status(500).json(err);
+    res.status(500).json(err);
   }
 });
 
 router.put('/:id', async (req, res) => {
   // update a category by its `id` value
-  try { 
+  try {
     const data = await Category.update(req.body, {
       where: {
         id: req.params.id
       },
     });
     if (!data) {
-      res.status(404).json({ message: 'No category found with that ID'})
+      res.status(404).json({ message: 'No category found with that ID' })
     }
-    res.status(200).json(data)
+    res.status(200).json({data, message: `Successfully updated category with id ${req.params.id}`})
   } catch (err) {
     res.status(500).json(err)
   }
@@ -61,16 +65,16 @@ router.put('/:id', async (req, res) => {
 
 router.delete('/:id', async (req, res) => {
   // delete a category by its `id` value
-try { 
+  try {
     const data = await Category.destroy({
       where: {
         id: req.params.id
       },
     });
     if (!data) {
-    res.status(404).json({ message: 'No category found with that ID'})
+      res.status(404).json({ message: 'No category found with that ID' })
     }
-    res.status(200).json(data)
+    res.status(200).json({data, message: `Successfully deleted category with id ${req.params.id}`})
   } catch (err) {
     res.status(500).json(err)
   }
