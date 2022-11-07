@@ -38,8 +38,6 @@ router.post('/', async (req, res) => {
   if (!req.body?.category_name) res.status(400).json({ message: 'Missing category name in request body'})
   try {
     const data = await Category.create(req.body);
-    console.log(data)
-    // if (!data) res.status(404).json({ message: 'Unable to create category'})
     res.status(200).json(data);
   } catch (err) {
     res.status(500).json(err);
@@ -57,7 +55,7 @@ router.put('/:id', async (req, res) => {
     if (!data) {
       res.status(404).json({ message: 'No category found with that ID' })
     }
-    res.status(200).json({data, message: `Successfully updated category with id ${req.params.id}`})
+    res.status(200).json({message: `Successfully updated category with id ${req.params.id}`})
   } catch (err) {
     res.status(500).json(err)
   }
